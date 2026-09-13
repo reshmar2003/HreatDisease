@@ -9,6 +9,7 @@ import {
   Users,
 } from 'lucide-react'
 import AnalysisCharts from '../components/AnalysisCharts.jsx'
+import PatientRecordsPage from './PatientRecordsPage.jsx'
 import { getChartData } from '../services/chartApi.js'
 import { getPatientSummary } from '../services/patientApi.js'
 
@@ -41,6 +42,7 @@ function DashboardPage({ username, onSignOut }) {
   const [chartData, setChartData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [activeView, setActiveView] = useState('dashboard')
 
   async function loadSummary() {
     setIsLoading(true)
@@ -71,10 +73,10 @@ function DashboardPage({ username, onSignOut }) {
 
         <nav className="dashboard-nav" aria-label="Main menu">
           <p className="menu-label">Workspace</p>
-          <button className="menu-item menu-item-active" type="button">
+          <button className={`menu-item ${activeView === 'dashboard' ? 'menu-item-active' : ''}`} type="button" onClick={() => setActiveView('dashboard')}>
             <LayoutDashboard size={18} /> Dashboard
           </button>
-          <button className="menu-item" type="button" disabled>
+          <button className={`menu-item ${activeView === 'records' ? 'menu-item-active' : ''}`} type="button" onClick={() => setActiveView('records')}>
             <ClipboardList size={18} /> Patient records
           </button>
         </nav>
@@ -97,7 +99,8 @@ function DashboardPage({ username, onSignOut }) {
           </button>
         </header>
 
-        {error && <div className="dashboard-error" role="alert">{error}</div>}
+        {activeView === 'records' ? <PatientRecordsPage /> : <>
+          {error && <div className="dashboard-error" role="alert">{error}</div>}
 
         <section className="stats-grid" aria-label="Patient statistics">
           {CARD_CONFIG.map(({ key, label, description, icon: Icon, className }) => (
@@ -121,7 +124,8 @@ function DashboardPage({ username, onSignOut }) {
           </div>
         </section>
 
-        <AnalysisCharts chartData={chartData} isLoading={isLoading} />
+          <AnalysisCharts chartData={chartData} isLoading={isLoading} />
+        </>}
       </main>
     </div>
   )

@@ -25,3 +25,22 @@ export function getPatientSummary() {
     patientsWithHeartDisease,
   }))
 }
+
+export async function getPatientList(pageno, pagecount) {
+  const response = await fetch(`${API_URL}/patientList`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pageno, pagecount }),
+  })
+
+  if (!response.ok) {
+    throw new Error('Patient list request failed')
+  }
+
+  const result = await response.json()
+  if (!result.success) {
+    throw new Error(result.message)
+  }
+
+  return result.data
+}
