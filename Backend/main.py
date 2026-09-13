@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from api.card import router as card_router
+from api.chart import router as chart_router
 from api.login import router as login_router
 from config import CORS_ORIGINS
 from models.responses import BaseResponse
@@ -18,6 +19,7 @@ app.add_middleware(
 
 app.include_router(login_router)
 app.include_router(card_router)
+app.include_router(chart_router)
 
 
 @app.get("/", response_model=BaseResponse)

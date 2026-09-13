@@ -8,6 +8,8 @@ import {
   RefreshCw,
   Users,
 } from 'lucide-react'
+import AnalysisCharts from '../components/AnalysisCharts.jsx'
+import { getChartData } from '../services/chartApi.js'
 import { getPatientSummary } from '../services/patientApi.js'
 
 const CARD_CONFIG = [
@@ -36,6 +38,7 @@ const CARD_CONFIG = [
 
 function DashboardPage({ username, onSignOut }) {
   const [summary, setSummary] = useState(null)
+  const [chartData, setChartData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -44,7 +47,9 @@ function DashboardPage({ username, onSignOut }) {
     setError('')
 
     try {
-      setSummary(await getPatientSummary())
+      const [patientSummary, analysisData] = await Promise.all([getPatientSummary(), getChartData()])
+      setSummary(patientSummary)
+      setChartData(analysisData)
     } catch {
       setError('Unable to load patient statistics. Check that the API is running.')
     } finally {
@@ -115,6 +120,8 @@ function DashboardPage({ username, onSignOut }) {
             <p>Use these summary metrics as a starting point for patient-level prediction analysis.</p>
           </div>
         </section>
+
+        <AnalysisCharts chartData={chartData} isLoading={isLoading} />
       </main>
     </div>
   )

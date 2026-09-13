@@ -18,6 +18,17 @@ Patient summary endpoints:
 
 Each card endpoint returns a base response with the count in `data.count`.
 
+Chart endpoints:
+
+- `GET /chart/HeartDiease`
+- `GET /chart/AgeDistribution`
+- `GET /chart/cholesterolAnalysis`
+- `GET /chart/BloodPressureAnalysis`
+- `GET /chart/MaximumHeartRateAnalysis`
+- `GET /chart/chestPainType`
+
+Chart responses return aggregated rows in `data` from `dbo.PatientInfo`. The `target` column is interpreted as `0 = no heart disease` and `1 = heart disease`.
+
 The backend connects to the local SQL Server instance `Reshma\SQLEXPRESS` and database `HeartDiseasePrediction` using Windows authentication. It looks up credentials in `dbo.LoginInfo` with `username` and `password` columns. The supplied schema and seed records are in [database.sql](database.sql). Set `DATABASE_CONNECTION_STRING` to override the default connection string.
 
 The Microsoft ODBC Driver 17 for SQL Server must be installed on the machine running the backend.
