@@ -140,7 +140,8 @@ button:disabled { cursor: wait; opacity: .7; }
 .records-table th, .records-table td { padding: 16px 20px; border-bottom: 1px solid #edf3f3; color: #537080; font-size: 12px; text-align: left; }
 .records-table th { color: var(--muted); background: #f8fbfb; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 .records-table tbody tr:last-child td { border-bottom: 0; }
-.records-table td:first-child { color: var(--ink); font-weight: 700; }
+.records-table td:first-child { color: var(--muted); }
+.records-table td:nth-child(2) { color: var(--ink); font-weight: 700; }
 .records-message { padding: 34px !important; color: var(--muted) !important; text-align: center !important; }
 .target-badge { display: inline-flex; padding: 5px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; }
 .target-0 { color: #2c6d8d; background: #eaf3f8; }

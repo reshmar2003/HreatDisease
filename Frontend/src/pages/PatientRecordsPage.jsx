@@ -50,13 +50,14 @@ function PatientRecordsPage() {
       <div className="records-table-wrap">
         <table className="records-table">
           <thead>
-            <tr><th>Patient name</th><th>Age</th><th>Sex</th><th>Target</th></tr>
+            <tr><th>No.</th><th>Patient name</th><th>Age</th><th>Sex</th><th>Target</th></tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan="4" className="records-message">Loading patient records...</td></tr>}
-            {!isLoading && !patients.length && <tr><td colSpan="4" className="records-message">No patient records found.</td></tr>}
+            {isLoading && <tr><td colSpan="5" className="records-message">Loading patient records...</td></tr>}
+            {!isLoading && !patients.length && <tr><td colSpan="5" className="records-message">No patient records found.</td></tr>}
             {!isLoading && patients.map((patient, index) => (
               <tr key={`${patient.name}-${patient.age}-${index}`}>
+                <td className="records-index">{((page - 1) * PAGE_SIZE) + index + 1}</td>
                 <td>{patient.name || 'Unnamed patient'}</td>
                 <td>{patient.age}</td>
                 <td>{patient.sex}</td>
