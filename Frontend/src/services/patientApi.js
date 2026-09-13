@@ -44,3 +44,17 @@ export async function getPatientList(pageno, pagecount) {
 
   return result.data
 }
+
+export async function getPatientView(patientId) {
+  const response = await fetch(`${API_URL}/patientview/${patientId}`)
+  if (!response.ok) {
+    throw new Error('Patient details request failed')
+  }
+
+  const result = await response.json()
+  if (!result.success) {
+    throw new Error(result.message)
+  }
+
+  return result.data
+}

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { ChevronLeft, ChevronRight, ClipboardList } from 'lucide-react'
+import { ChevronLeft, ChevronRight, ClipboardList, Eye } from 'lucide-react'
 import { getPatientList } from '../services/patientApi.js'
 
 const PAGE_SIZE = 10
 
-function PatientRecordsPage() {
+function PatientRecordsPage({ onViewPatient }) {
   const [patients, setPatients] = useState([])
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
@@ -50,18 +50,19 @@ function PatientRecordsPage() {
       <div className="records-table-wrap">
         <table className="records-table">
           <thead>
-            <tr><th>No.</th><th>Patient name</th><th>Age</th><th>Sex</th><th>Target</th></tr>
+            <tr><th>No.</th><th>Patient name</th><th>Age</th><th>Sex</th><th>Target</th><th>Action</th></tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan="5" className="records-message">Loading patient records...</td></tr>}
-            {!isLoading && !patients.length && <tr><td colSpan="5" className="records-message">No patient records found.</td></tr>}
+            {isLoading && <tr><td colSpan="6" className="records-message">Loading patient records...</td></tr>}
+            {!isLoading && !patients.length && <tr><td colSpan="6" className="records-message">No patient records found.</td></tr>}
             {!isLoading && patients.map((patient, index) => (
-              <tr key={`${patient.name}-${patient.age}-${index}`}>
+              <tr key={patient.id}>
                 <td className="records-index">{((page - 1) * PAGE_SIZE) + index + 1}</td>
                 <td>{patient.name || 'Unnamed patient'}</td>
                 <td>{patient.age}</td>
                 <td>{patient.sex}</td>
                 <td><span className={`target-badge target-${patient.target}`}>{patient.target === 1 ? 'Heart disease' : 'No heart disease'}</span></td>
+                <td><button type="button" className="view-button" onClick={() => onViewPatient(patient.id)} title="View patient details"><Eye size={15} /> View</button></td>
               </tr>
             ))}
           </tbody>

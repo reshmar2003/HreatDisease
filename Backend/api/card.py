@@ -1,5 +1,5 @@
 import pyodbc
-from fastapi import APIRouter
+from fastapi import APIRouter, Path
 from pydantic import BaseModel, Field
 
 from database import get_connection
@@ -62,7 +62,7 @@ def patients_with_heart_disease() -> BaseResponse:
 def patient_list(request: PatientListRequest) -> BaseResponse:
     offset = (request.pageno - 1) * request.pagecount
     query = """
-        SELECT Name AS name, age, sex, target
+        SELECT Id AS id, Name AS name, age, sex, target
         FROM dbo.PatientInfo
         ORDER BY Id
         OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
@@ -91,3 +91,30 @@ def patient_list(request: PatientListRequest) -> BaseResponse:
             "pagecount": request.pagecount,
         },
     )
+
+
+@router.get("/patientview/{patient_id}", response_model=BaseResponse)
+def patient_view(patient_id: int = Path(ge=1)) -> BaseResponse:
+    query = """
+        SELECT Id AS id, Name AS name, age, sex, cp, trestbps, chol, fbs,
+               restecg, thalachh, exang, oldpeak, slope, ca, thal, target
+        FROM dbo.PatientInfo
+        WHERE Id = ?
+    """
+
+    try:
+        with get_connection() as connection:
+            cursor = connection.execute(query, patient_id)
+            row = cursor.fetchone()
+            if row is None:
+                return BaseResponse(success=False, message="Patient not found", data=None)
+            columns = [column[0] for column in cursor.description]
+            patient = dict(zip(columns, row))
+    except pyodbc.Error:
+        return BaseResponse(
+            success=False,
+            message="Unable to connect to the database",
+            data=None,
+        )
+
+    return BaseResponse(success=True, message="Patient details retrieved", data=patient)

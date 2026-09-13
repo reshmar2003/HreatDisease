@@ -151,6 +151,24 @@ button:disabled { cursor: wait; opacity: .7; }
 .page-button { width: 36px; height: 36px; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: #fff; }
 .page-button:hover:not(:disabled) { color: var(--teal-dark); background: #fff; }
 .page-button:disabled { cursor: not-allowed; opacity: .45; }
+.view-button { width: auto; height: 32px; margin: 0; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; color: var(--teal-dark); background: #fff; font-size: 11px; }
+.view-button:hover:not(:disabled) { color: #fff; background: var(--teal); }
+.patient-detail-panel { margin-top: 18px; padding: 21px; border: 1px solid var(--line); border-radius: 10px; background: #fff; box-shadow: 0 10px 22px rgba(16, 42, 67, .04); }
+.patient-detail-heading { display: flex; align-items: start; justify-content: space-between; }
+.patient-detail-heading .eyebrow { margin-bottom: 7px; }
+.patient-detail-heading h3 { margin: 0; color: var(--ink); font-family: Manrope, sans-serif; font-size: 20px; }
+.detail-close-button { width: 32px; height: 32px; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 6px; color: var(--muted); background: #fff; }
+.patient-detail-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-top: 21px; }
+.patient-detail-grid div { display: grid; gap: 5px; padding-top: 10px; border-top: 1px solid #edf3f3; }
+.patient-detail-grid span { color: var(--muted); font-size: 10px; font-weight: 700; text-transform: uppercase; }
+.patient-detail-grid strong { color: var(--ink); font-size: 13px; }
+.patient-view-section { margin-top: 45px; }
+.back-button { width: auto; height: 36px; margin: 0 0 28px; padding: 0 11px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: #fff; font-size: 11px; }
+.back-button:hover:not(:disabled) { color: var(--teal-dark); background: #fff; }
+.patient-view-heading { display: flex; align-items: center; justify-content: space-between; }
+.patient-view-heading h2 { color: var(--ink); font-size: 25px; }
+.patient-view-panel { margin-top: 22px; }
+.patient-view-message { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 22px; border: 1px dashed var(--line); border-radius: 9px; }
 .prediction-section { margin-top: 45px; padding-top: 38px; border-top: 1px solid var(--line); }
 .analysis-page { margin-top: 45px; }
 .analysis-page-heading h2 { color: var(--ink); font-size: 25px; }
