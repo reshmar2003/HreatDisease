@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import {
   Activity,
+  BrainCircuit,
   ClipboardList,
   HeartPulse,
   LayoutDashboard,
@@ -10,6 +11,7 @@ import {
 } from 'lucide-react'
 import AnalysisCharts from '../components/AnalysisCharts.jsx'
 import PatientRecordsPage from './PatientRecordsPage.jsx'
+import HeartDiseaseAnalysisPage from './HeartDiseaseAnalysisPage.jsx'
 import { getChartData } from '../services/chartApi.js'
 import { getPatientSummary } from '../services/patientApi.js'
 
@@ -79,6 +81,9 @@ function DashboardPage({ username, onSignOut }) {
           <button className={`menu-item ${activeView === 'records' ? 'menu-item-active' : ''}`} type="button" onClick={() => setActiveView('records')}>
             <ClipboardList size={18} /> Patient records
           </button>
+          <button className={`menu-item ${activeView === 'analysis' ? 'menu-item-active' : ''}`} type="button" onClick={() => setActiveView('analysis')}>
+            <BrainCircuit size={18} /> Heart disease analysis
+          </button>
         </nav>
 
         <button className="menu-item sign-out" type="button" onClick={onSignOut}>
@@ -99,7 +104,7 @@ function DashboardPage({ username, onSignOut }) {
           </button>
         </header>
 
-        {activeView === 'records' ? <PatientRecordsPage /> : <>
+        {activeView === 'records' ? <PatientRecordsPage /> : activeView === 'analysis' ? <HeartDiseaseAnalysisPage /> : <>
           {error && <div className="dashboard-error" role="alert">{error}</div>}
 
         <section className="stats-grid" aria-label="Patient statistics">
