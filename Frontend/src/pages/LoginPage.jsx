@@ -4,7 +4,7 @@ import { login } from '../services/authApi.js'
 
 const INITIAL_CREDENTIALS = { username: '', password: '' }
 
-function LoginPage() {
+function LoginPage({ onLoginSuccess }) {
   const [credentials, setCredentials] = useState(INITIAL_CREDENTIALS)
   const [status, setStatus] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -23,6 +23,9 @@ function LoginPage() {
     try {
       const result = await login(credentials)
       setStatus({ success: result.success, message: result.message })
+      if (result.success) {
+        onLoginSuccess(result.data?.username || credentials.username)
+      }
     } catch {
       setStatus({
         success: false,
