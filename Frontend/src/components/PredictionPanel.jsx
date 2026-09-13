@@ -2,20 +2,27 @@ import { useEffect, useState } from 'react'
 import { BrainCircuit, LoaderCircle, Sparkles } from 'lucide-react'
 import { getPredictionMetrics, predictDisease } from '../services/predictionApi.js'
 
-const DEFAULT_VALUES = {
-  age: 55, sex: 1, cp: 1, trestbps: 130, chol: 240, fbs: 0, restecg: 0,
-  thalachh: 150, exang: 0, oldpeak: 1.0, slope: 1, ca: 0, thal: 2,
-}
-
 const FIELDS = [
-  ['age', 'Age'], ['sex', 'Sex (0 female, 1 male)'], ['cp', 'Chest pain type'],
-  ['trestbps', 'Resting blood pressure'], ['chol', 'Cholesterol'], ['fbs', 'Fasting blood sugar'],
-  ['restecg', 'Resting ECG'], ['thalachh', 'Maximum heart rate'], ['exang', 'Exercise angina'],
-  ['oldpeak', 'Oldpeak'], ['slope', 'ST slope'], ['ca', 'Major vessels'], ['thal', 'Thalassemia'],
+  ['age', 'Age', 'number', 'e.g. 55'],
+  ['sex', 'Sex', 'select', [['0', 'Female'], ['1', 'Male']]],
+  ['cp', 'Chest pain type', 'select', [['0', 'Typical angina'], ['1', 'Atypical angina'], ['2', 'Non-anginal pain'], ['3', 'Asymptomatic']]],
+  ['trestbps', 'Resting blood pressure', 'number', 'e.g. 130'],
+  ['chol', 'Cholesterol', 'number', 'e.g. 240'],
+  ['fbs', 'Fasting blood sugar', 'select', [['0', 'Below 120 mg/dl'], ['1', 'Above 120 mg/dl']]],
+  ['restecg', 'Resting ECG', 'select', [['0', 'Normal'], ['1', 'ST-T wave abnormality'], ['2', 'Left ventricular hypertrophy']]],
+  ['thalachh', 'Maximum heart rate', 'number', 'e.g. 150'],
+  ['exang', 'Exercise angina', 'select', [['0', 'No'], ['1', 'Yes']]],
+  ['oldpeak', 'Oldpeak', 'number', 'e.g. 1.0'],
+  ['slope', 'ST slope', 'select', [['0', 'Upsloping'], ['1', 'Flat'], ['2', 'Downsloping']]],
+  ['ca', 'Major vessels', 'select', [['0', '0 vessels'], ['1', '1 vessel'], ['2', '2 vessels'], ['3', '3 vessels'], ['4', '4 vessels']]],
+  ['thal', 'Thalassemia', 'select', [['0', 'Normal'], ['1', 'Fixed defect'], ['2', 'Reversible defect'], ['3', 'Other']]],
 ]
 
+const EMPTY_VALUES = Object.fromEntries(FIELDS.map(([field]) => [field, '']))
+
 function PredictionPanel() {
-  const [values, setValues] = useState(DEFAULT_VALUES)
+  const [name, setName] = useState('')
+  const [values, setValues] = useState(EMPTY_VALUES)
   const [result, setResult] = useState(null)
   const [metrics, setMetrics] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -34,7 +41,7 @@ function PredictionPanel() {
     setIsLoading(true)
     setError('')
     try {
-      setResult(await predictDisease(values))
+      setResult(await predictDisease({ name, ...values }))
     } catch {
       setError('Unable to predict disease. Check that the backend API is running.')
     } finally {
@@ -49,10 +56,20 @@ function PredictionPanel() {
         <div className="records-heading-icon"><BrainCircuit size={22} /></div>
       </div>
       <form className="prediction-form" onSubmit={submit}>
+        <label className="prediction-field prediction-name-field">Patient name
+          <input type="text" value={name} onChange={(event) => setName(event.target.value)} placeholder="e.g. Priya Sharma" maxLength="250" required />
+        </label>
         <div className="prediction-fields">
-          {FIELDS.map(([field, label]) => (
+          {FIELDS.map(([field, label, type, hint]) => (
             <label key={field} className="prediction-field">{label}
-              <input type="number" step={field === 'oldpeak' ? '0.1' : '1'} value={values[field]} onChange={(event) => updateValue(field, event.target.value)} required />
+              {type === 'select' ? (
+                <select value={values[field]} onChange={(event) => updateValue(field, event.target.value)} required>
+                  <option value="">Select {label.toLowerCase()}</option>
+                  {hint.map(([value, optionLabel]) => <option value={value} key={value}>{optionLabel}</option>)}
+                </select>
+              ) : (
+                <input type="number" step={field === 'oldpeak' ? '0.1' : '1'} value={values[field]} onChange={(event) => updateValue(field, event.target.value)} placeholder={hint} required />
+              )}
             </label>
           ))}
         </div>

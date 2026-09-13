@@ -3,11 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+import pyodbc
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 
+from database import get_connection
 from models.responses import BaseResponse
 
 
@@ -22,6 +24,7 @@ _metrics: dict | None = None
 
 
 class PredictionRequest(BaseModel):
+    name: str = Field(min_length=1, max_length=250)
     age: int = Field(ge=1)
     sex: int = Field(ge=0, le=1)
     cp: int = Field(ge=0)
@@ -91,8 +94,34 @@ def predict_disease(request: PredictionRequest) -> BaseResponse:
         prediction = int(model.predict(values)[0])
         probabilities = model.predict_proba(values)[0]
         probability = float(probabilities[prediction])
-    except (OSError, ValueError, KeyError):
-        return BaseResponse(success=False, message="Unable to run the prediction model", data=None)
+        with get_connection() as connection:
+            connection.execute(
+                """
+                INSERT INTO dbo.PatientInfo
+                    (Id, Name, age, sex, cp, trestbps, chol, fbs, restecg,
+                     thalachh, exang, oldpeak, slope, ca, thal, target)
+                SELECT ISNULL(MAX(Id), 0) + 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                FROM dbo.PatientInfo
+                """,
+                request.name,
+                request.age,
+                request.sex,
+                request.cp,
+                request.trestbps,
+                request.chol,
+                request.fbs,
+                request.restecg,
+                request.thalachh,
+                request.exang,
+                request.oldpeak,
+                request.slope,
+                request.ca,
+                request.thal,
+                prediction,
+            )
+            connection.commit()
+    except (OSError, ValueError, KeyError, TypeError, pyodbc.Error):
+        return BaseResponse(success=False, message="Unable to run the prediction and save the patient", data=None)
 
     return BaseResponse(
         success=True,
@@ -103,5 +132,6 @@ def predict_disease(request: PredictionRequest) -> BaseResponse:
             "confidence": round(probability, 4),
             "model": "Random Forest",
             "accuracy": metrics["accuracy"],
+            "saved": True,
         },
     )
